@@ -1,4 +1,9 @@
-py_calc
-=======
+mem_calculator
+==============
 
-Python calculator
+Memory calculator
+
+Target:
+-------
+
+Wrote an calculator for analysis memory data.
