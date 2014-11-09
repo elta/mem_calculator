@@ -14,8 +14,39 @@ var init = function() {
 	$("div#keyPad button.keyPad_btnNormal").click(function() {
 		var btn = $(this).html();
 		$(inputArea).val($(inputArea).val() + btn);
-//		$(inputArea).focus();
+		// $(inputArea).focus();
 		printf(btn);
+	});
+
+	$("div#keyPad button.keyPad_Clear").click(function() {
+		var btn = $(this).html();
+		$(inputArea).val('');
+		// $(inputArea).focus();
+		printf(btn);
+	});
+
+	$("div#keyPad button.keyPad_Percent").click(function() {
+		var inputBox = $(inputArea);
+		var retVal = inputBox.val();
+
+		if (retVal.toString().indexOf("%") == -1) {
+			retVal = parseFloat(retVal) * 100;
+			printf(retVal + "%");
+			inputBox.val(retVal + "%");
+		} else {
+			printf("Can't do percent.");
+		}
+		// $(inputArea).focus();
+	});
+
+	$("div#keyPad button.keyPad_Reverse").click(function() {
+		var inputBox = $(inputArea);
+		var retVal = inputBox.val();
+
+		retVal = -parseFloat(retVal);
+		printf(retVal);
+		inputBox.val(retVal);
+		// $(inputArea).focus();
 	});
 
 	$("button#keyPad_Calc").click(function() {
@@ -55,7 +86,7 @@ var init = function() {
 		}
 
 		inputBox.val(retVal);
-//		inputBox.focus();
+		// inputBox.focus();
 	});
 };
 
