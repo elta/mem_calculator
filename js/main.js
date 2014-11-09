@@ -1,4 +1,5 @@
 //Initialize function
+var last_calculated = 0;
 
 function printf(str) {
 	var debug = 1;
@@ -13,6 +14,19 @@ var init = function() {
 
 	$("div#keyPad button.keyPad_btnNormal").click(function() {
 		var btn = $(this).html();
+		if (last_calculated == 1) {
+			last_calculated = 0;
+			$(inputArea).val(btn);
+		} else {
+			$(inputArea).val($(inputArea).val() + btn);
+		}
+		// $(inputArea).focus();
+		printf(btn);
+	});
+
+	$("div#keyPad button.keyPad_Operation").click(function() {
+		var btn = $(this).html();
+		last_calculated = 0;
 		$(inputArea).val($(inputArea).val() + btn);
 		// $(inputArea).focus();
 		printf(btn);
@@ -29,6 +43,10 @@ var init = function() {
 		var inputBox = $(inputArea);
 		var retVal = inputBox.val();
 
+		if (retVal == "") {
+			return;
+		}
+
 		if (retVal.toString().indexOf("%") == -1) {
 			retVal = parseFloat(retVal) * 100;
 			printf(retVal + "%");
@@ -43,51 +61,38 @@ var init = function() {
 		var inputBox = $(inputArea);
 		var retVal = inputBox.val();
 
+		if (retVal == "") {
+			return;
+		}
+
 		retVal = -parseFloat(retVal);
 		printf(retVal);
 		inputBox.val(retVal);
 		// $(inputArea).focus();
 	});
 
-	$("button#keyPad_Calc").click(function() {
-		var inputBox = $(inputArea);
-		var arrVal;
-		var x1;
-		var x2;
-		var retVal = "ERROR! CHECK INPUT";
+	$("button#keyPad_Calc").click(
+			function() {
+				var inputBox = $(inputArea);
+				var retVal = "ERROR! CHECK INPUT";
+				var operators = [ '+', '-', 'x', '¡Â' ];
+				var equation = inputBox.val();
+				var lastChar = equation[equation.length - 1];
+				equation = equation.replace(/x/g, '*').replace(/¡Â/g, '/')
+						.replace(/%/g, '/100');
+				if (operators.indexOf(lastChar) > -1 || lastChar == '.')
+					equation = equation.replace(/.$/, '');
 
-		// VALIDATE INPUT USING SPLIT FUNCTION AND REGULAR EXPRESSION
-		arrVal = inputBox.val().split(/[+-\/*]+/);
-		if (arrVal.length > 2) {
-			inputBox.val(retVal);
-			return;
-		}
+				if (equation) {
+					inputBox.val(eval(equation));
+					last_calculated = 1;
+					return;
+				}
 
-		// parse to get 2 operands
-		x1 = parseFloat(arrVal[0]);
-		x2 = parseFloat(arrVal[1]);
+				inputBox.val(retValue);
 
-		// "+"
-		if (inputBox.val().indexOf('+') >= 0) {
-			retVal = x1 + x2;
-		}
-		// "-"
-		else if (inputBox.val().indexOf('-') >= 0) {
-			retVal = x1 - x2;
-		}
-		// "*"
-		else if (inputBox.val().indexOf('*') >= 0) {
-			retVal = x1 * x2;
-		}
-		// "/"
-		else if (inputBox.val().indexOf('/') >= 0) {
-			retVal = x1 / x2;
-		} else {
-		}
-
-		inputBox.val(retVal);
-		// inputBox.focus();
-	});
+				// inputBox.focus();
+			});
 };
 
 $(document).ready(init);
