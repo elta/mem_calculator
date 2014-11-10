@@ -8,12 +8,21 @@ var last_input = INPUT_NONE;
 
 var save_number = 0;
 var save_operation = '';
+var save_btn = null;
 
 function reset_values() {
 	last_input = INPUT_NONE;
 
 	save_number = 0;
 	save_operation = '';
+}
+
+function change_btn_style(btn) {
+	if (save_btn != null) {
+		save_btn.context.style.background = '#FFF';
+	}
+	btn.context.style.background = '#3CF';
+	save_btn = btn;
 }
 
 function printf(str) {
@@ -29,6 +38,8 @@ var init = function() {
 
 	$("div#keyPad button.keyPad_btnNormal").click(function() {
 		var btn = $(this).html();
+
+		change_btn_style($(this));
 
 		if (last_calculated == 1) {
 			reset_values();
@@ -51,6 +62,8 @@ var init = function() {
 			function() {
 				var btn = $(this).html();
 
+				change_btn_style($(this));
+
 				if (last_calculated == 1) {
 					last_calculated = 0;
 					save_number = $(inputArea).val();
@@ -67,6 +80,7 @@ var init = function() {
 								+ '(' + $(inputArea).val() + ')';
 						equation = equation.replace(/x/g, '*').replace(/¡Â/g,
 								'/').replace(/%/g, '/100');
+						printf(equation);
 						save_number = eval(equation).toString();
 						$(inputArea).val(save_number);
 					} else {
@@ -84,6 +98,9 @@ var init = function() {
 
 	$("div#keyPad button.keyPad_Clear").click(function() {
 		var btn = $(this).html();
+
+		change_btn_style($(this));
+
 		$(inputArea).val('');
 		// $(inputArea).focus();
 		reset_values();
@@ -93,6 +110,8 @@ var init = function() {
 	$("div#keyPad button.keyPad_Percent").click(function() {
 		var inputBox = $(inputArea);
 		var retVal = inputBox.val();
+
+		change_btn_style($(this));
 
 		if (retVal == "") {
 			return;
@@ -112,6 +131,8 @@ var init = function() {
 		var inputBox = $(inputArea);
 		var retVal = inputBox.val();
 
+		change_btn_style($(this));
+
 		if (retVal == "") {
 			return;
 		}
@@ -126,6 +147,8 @@ var init = function() {
 			function() {
 				var equation;
 
+				change_btn_style($(this));
+
 				if (last_calculated == 1) {
 					equation = '(' + $(inputArea).val() + ')' + save_operation
 							+ '(' + save_number + ')';
@@ -137,6 +160,7 @@ var init = function() {
 
 				equation = equation.replace(/x/g, '*').replace(/¡Â/g, '/')
 						.replace(/%/g, '/100');
+				printf(equation);
 				$(inputArea).val(eval(equation).toString());
 
 				last_calculated = 1;
@@ -145,9 +169,3 @@ var init = function() {
 };
 
 $(document).ready(init);
-
-function copyText() {
-	var tmp = document.getElementById("btn1").value;
-	console.log(tmp);
-	document.getElementById("result").value = tmp;
-}
