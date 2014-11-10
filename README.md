@@ -11,12 +11,11 @@ Target:
 
 Write an calculator for analysis memory data.
 
-Current:
+Versions:
 --------
 
-v0.1
+##v0.2
+Fix bugs and better for use. Still an simple calculator with '+ - * /'
+
+##v0.1
 An basic calcalator with simple '+ - * /'.
-
-
-Olds:
------
