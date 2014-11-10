@@ -1,20 +1,41 @@
 //Initialize function
 var last_calculated = 0;
 
+var INPUT_NONE = -1;
+var INPUT_NUMBER = 0;
+var INPUT_OPERATION = 1;
+var last_input = INPUT_NONE;
+
+var save_number = 0;
+var save_operation = '';
+
+function reset_values() {
+	last_input = INPUT_NONE;
+
+	save_number = 0;
+	save_operation = '';
+}
+
 function printf(str) {
 	var debug = 1;
 	if (debug == 1) {
 		console.log(str);
 	}
+	;
 }
 
 var init = function() {
-	// TODO:: Do your initialization job
 	console.log("init() called");
 
 	$("div#keyPad button.keyPad_btnNormal").click(function() {
 		var btn = $(this).html();
+
 		if (last_calculated == 1) {
+			reset_values();
+
+			last_calculated = 0;
+			$(inputArea).val(btn);
+		} else if (last_input == INPUT_OPERATION) {
 			last_calculated = 0;
 			$(inputArea).val(btn);
 		} else {
@@ -22,20 +43,50 @@ var init = function() {
 		}
 		// $(inputArea).focus();
 		printf(btn);
+
+		last_input = INPUT_NUMBER;
 	});
 
-	$("div#keyPad button.keyPad_Operation").click(function() {
-		var btn = $(this).html();
-		last_calculated = 0;
-		$(inputArea).val($(inputArea).val() + btn);
-		// $(inputArea).focus();
-		printf(btn);
-	});
+	$("div#keyPad button.keyPad_Operation").click(
+			function() {
+				var btn = $(this).html();
+
+				if (last_calculated == 1) {
+					last_calculated = 0;
+					save_number = $(inputArea).val();
+				}
+
+				if (last_input == INPUT_OPERATION) {
+					save_operation = btn;
+					return;
+				}
+
+				if (last_input == INPUT_NUMBER) {
+					if (save_operation != '') {
+						var equation = '(' + save_number + ')' + save_operation
+								+ '(' + $(inputArea).val() + ')';
+						equation = equation.replace(/x/g, '*').replace(/¡Â/g,
+								'/').replace(/%/g, '/100');
+						save_number = eval(equation).toString();
+						$(inputArea).val(save_number);
+					} else {
+						save_number = $(inputArea).val();
+					}
+				}
+
+				save_operation = btn;
+				// $(inputArea).val($(inputArea).val() + btn);
+				// $(inputArea).focus();
+				printf(btn);
+
+				last_input = INPUT_OPERATION;
+			});
 
 	$("div#keyPad button.keyPad_Clear").click(function() {
 		var btn = $(this).html();
 		$(inputArea).val('');
 		// $(inputArea).focus();
+		reset_values();
 		printf(btn);
 	});
 
@@ -73,25 +124,23 @@ var init = function() {
 
 	$("button#keyPad_Calc").click(
 			function() {
-				var inputBox = $(inputArea);
-				var retVal = "ERROR! CHECK INPUT";
-				var operators = [ '+', '-', 'x', '¡Â' ];
-				var equation = inputBox.val();
-				var lastChar = equation[equation.length - 1];
-				equation = equation.replace(/x/g, '*').replace(/¡Â/g, '/')
-						.replace(/%/g, '/100');
-				if (operators.indexOf(lastChar) > -1 || lastChar == '.')
-					equation = equation.replace(/.$/, '');
+				var equation;
 
-				if (equation) {
-					inputBox.val(eval(equation));
-					last_calculated = 1;
-					return;
+				if (last_calculated == 1) {
+					equation = '(' + $(inputArea).val() + ')' + save_operation
+							+ '(' + save_number + ')';
+				} else {
+					equation = '(' + save_number + ')' + save_operation + '('
+							+ $(inputArea).val() + ')';
+					save_number = $(inputArea).val();
 				}
 
-				inputBox.val(retValue);
+				equation = equation.replace(/x/g, '*').replace(/¡Â/g, '/')
+						.replace(/%/g, '/100');
+				$(inputArea).val(eval(equation).toString());
 
-				// inputBox.focus();
+				last_calculated = 1;
+				last_input = INPUT_OPERATION;
 			});
 };
 
